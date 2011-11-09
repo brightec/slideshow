@@ -28,7 +28,6 @@ function slideshow_install() {
       'settings' => array(),
     ),
   );
-  
   $collection->instance = field_create_instance($collection->instance);
 
 
@@ -80,7 +79,6 @@ function slideshow_install() {
         'weight' => -1,
       ),
     ),
-
   );
   field_create_instance($instance);
 
@@ -113,14 +111,4 @@ function slideshow_uninstall() {
   field_delete_field('field_slideshow');
   field_delete_field('field_slide_title');
   field_delete_field('field_slide_image');
-}
-
-
-/**
- * Implements hook_ctools_plugin_directory().
- */
-function slideshow_ctools_plugin_directory($module, $plugin) {
-  if (($module == 'ctools' || $module == 'panels') && !empty($plugin)) {
-    return "plugins/$plugin";
-  }
 }
