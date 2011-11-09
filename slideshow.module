@@ -1,0 +1,126 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function slideshow_install() {
+
+  $collection = new stdClass();
+
+  // Create a field_collection field to use for the tests.
+  $collection->field_name = 'field_slideshow_collection';
+  //Cardinality -1 == Unlimited values
+  $collection->field = array('field_name' => $collection->field_name, 'type' => 'field_collection', 'cardinality' => -1);
+  $collection->field = field_create_field($collection->field);
+  $collection->field_id = $collection->field['id'];
+
+  $collection->instance = array(
+    'field_name' => $collection->field_name,
+    'entity_type' => 'node',
+    'bundle' => 'page',
+    'label' => 'Slideshow Field Collection',
+    'description' => 'A collection fields for the Slideshow. Defaults includes an Image and a text field and allows unlimited uploads.',
+    'weight' => 0,
+    'settings' => array(),
+    'widget' => array(
+      'type' => 'field_collection_embed',
+      'label' => 'Test',
+      'settings' => array(),
+    ),
+  );
+  
+  $collection->instance = field_create_instance($collection->instance);
+
+
+  // Add an Image field to the collection.
+  $field = array(
+    'field_name' => 'field_slide_image',
+    'type' => 'image',
+    'cardinality' => 1,
+  );
+  field_create_field($field);
+
+  $instance = array(
+    'field_name' => 'field_slide_image',
+    'entity_type' => 'field_collection_item',
+    'label' => 'Slide Image',
+    'bundle' => $collection->field_name,
+    'required' => FALSE,
+
+    'settings' => array(
+      'file_directory' => 'field/image',
+      'file_extensions' => 'png gif jpg jpeg',
+      'max_filesize' => '',
+      'max_resolution' => '',
+      'min_resolution' => '',
+      'alt_field' => '',
+      'title_field' => '',
+    ),
+
+    'weight' => 0,
+    'widget' => array(
+      'type' => 'image_image',
+      'settings' => array(
+        'progress_indicator' => 'throbber',
+        'preview_image_style' => 'thumbnail',
+      ),
+    ),
+      
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'type' => 'image',
+        'settings' => array('image_style' => 'large', 'image_link' => ''),
+        'weight' => -1,
+      ),
+      'teaser' => array(
+        'label' => 'hidden',
+        'type' => 'image',
+        'settings' => array('image_style' => 'medium', 'image_link' => 'content'),
+        'weight' => -1,
+      ),
+    ),
+
+  );
+  field_create_instance($instance);
+
+
+  // Add a field to the collection.
+  $field = array(
+    'field_name' => 'field_slide_title',
+    'type' => 'text',
+    'cardinality' => 1,
+    'translatable' => FALSE,
+  );
+  field_create_field($field);
+  $instance = array(
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_slide_title',
+    'bundle' => $collection->field_name,
+    'label' => 'Title',
+    'weight' => -1,
+    'widget' => array(
+      'type' => 'Text_textfield',
+    ),
+  );
+  field_create_instance($instance);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function slideshow_uninstall() {
+  field_delete_field('field_slideshow');
+  field_delete_field('field_slide_title');
+  field_delete_field('field_slide_image');
+}
+
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function slideshow_ctools_plugin_directory($module, $plugin) {
+  if (($module == 'ctools' || $module == 'panels') && !empty($plugin)) {
+    return "plugins/$plugin";
+  }
+}

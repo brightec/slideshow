@@ -1,0 +1,10 @@
+name = slideshow
+description = Brightec module for implementing a slideshow!
+core = 7.x
+package = Brightec
+dependencies[] = image
+dependencies[] = field_collection
+
+scripts[] = js/jquery.cycle.all.min.js
+
+
